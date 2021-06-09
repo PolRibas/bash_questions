@@ -3,10 +3,11 @@
 SRVER_URL=localhost:9200
 FILL_NAME=exercicebash2.txt
 OPTIONS="
-\n\033[0;31mhelp\033[0;39m    ->      Show this message
+\n\033[0;31mhelp\033[0;39m    ->      Show this message\n
 \n\033[0;31mA\033[0;39m       ->      List full output
 \n\033[0;31mB\033[0;39m       ->      Get the registers with more than 60 days
 \n\033[0;31mC\033[0;39m       ->      Reindex server backup
+\n\033[0;31mD\033[0;39m       ->      Delete Index
 \n
 
 "
@@ -14,7 +15,7 @@ OPTIONS="
 echo ${OPTIONS}
 
 while :; do
-    echo '\033[0;39m(A, B, C) select Option: '
+    echo '\033[0;39m(A, B, C, D) select Option: '
     read x
     case ${x} in
     A)
@@ -49,8 +50,20 @@ while :; do
         responseStatus=$?
         echo 'Exit code: ' $responseStatus
         ;;
-    D) 
-    ;;
+    D)
+        echo '\033[0;39mWrite index Name: '
+        read index_name
+        curl -X DELETE "${SRVER_URL}/${index_name}/_doc/1?routing=shard-1&pretty"
+        responseStatus=$?
+        echo 'Exit code: ' $responseStatus
+        ;;
+    D)
+        echo '\033[0;39mWrite index Name: '
+        read index_name
+        curl -X POST "${SRVER_URL}/${index_name}/_close?pretty"
+        responseStatus=$?
+        echo 'Exit code: ' $responseStatus
+        ;;
     help) echo ${OPTIONS} ;;
     esac
 done
